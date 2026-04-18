@@ -22,13 +22,11 @@ cat << "EOF"
   |  _ \ _   _ _ __| |__  __ 
   | |_) | | | | '__| '_ \/ _ \
   |  __/| |_| | |  | | | |  __/
-  |_|    \__,_|_|  |_| |_|\___|
-                               
-      [ DEEP CLEANING UTILITY ]
+  |_|    \__,_|_|  |_| |_|\___|[ DEEP CLEANING UTILITY ]
 EOF
 echo -e "${C_RST}\n"
 
-if [ "$EUID" -eq 0 ]; then
+if[ "$EUID" -eq 0 ]; then
     echo -e "${C_RED}✗ Ошибка: Не запускай от root!${C_RST}"
     exit 1
 fi
@@ -44,7 +42,6 @@ read -rp "$(echo -e ${C_CYAN}Вы уверены, что хотите продо
 
 echo -e "\n${C_CYAN}▸ Шаг 1: Удаление устаревших и ненужных пакетов...${C_RST}"
 
-# Список пакетов на удаление (используем pacman и yay)
 TRASH_PKGS=(
     rofi
     rofi-wayland
@@ -93,16 +90,15 @@ TRASH_FILES=(
 )
 
 for d in "${TRASH_DIRS[@]}"; do
-    if[ -d "$d" ]; then
+    if [ -d "$d" ]; then
         rm -rf "$d"
         echo -e "  ${C_GREEN}✓${C_RST} Директория ${C_PURP}${d}${C_RST} удалена."
     fi
 done
 
 for f in "${TRASH_FILES[@]}"; do
-    # Используем bash expansion для файлов вроде .zcompdump*
     for match in $f; do
-        if[ -f "$match" ]; then
+        if [ -f "$match" ]; then
             rm -f "$match"
             echo -e "  ${C_GREEN}✓${C_RST} Файл ${C_PURP}${match}${C_RST} удалён."
         fi
@@ -110,7 +106,6 @@ for f in "${TRASH_FILES[@]}"; do
 done
 
 echo -e "\n${C_CYAN}▸ Шаг 4: Удаление старых бэкапов от прошлых установщиков...${C_RST}"
-# Находим все папки бэкапов
 BACKUPS=$(find "$HOME" -maxdepth 1 -type d \( -name ".config-backup-lain-*" -o -name ".config-backup-old" \) 2>/dev/null)
 
 if [ -n "$BACKUPS" ]; then
@@ -129,4 +124,3 @@ echo -e "  ${C_GREEN}✓${C_RST} Кэш Pacman очищен."
 echo -e "\n${C_GREEN}================================================================${C_RST}"
 echo -e "${C_PURP}✨ СИСТЕМА ИДЕАЛЬНО ЧИСТА!${C_RST}"
 echo -e "${C_DIM}Теперь твой Arch Linux не содержит ничего лишнего.${C_RST}"
-echo -e "${C_DIM}Осталась только чистая эстетика Caelestia и нужные инструменты.${C_RST}"
