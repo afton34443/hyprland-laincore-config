@@ -20,7 +20,9 @@ cat << "EOF"
  | |    __ _(_)_ __         / ___|___  _ __ ___ 
  | |   / _` | | '_ \ _____ | |   / _ \| '__/ _ \
  | |__| (_| | | | | |_____|| |__| (_) | | |  __/
- |_____\__,_|_|_| |_|       \____\___/|_|  \___|[ WAYLAND RICE • LAIN-CORE x CAELESTIA ]
+ |_____\__,_|_|_| |_|       \____\___/|_|  \___|
+ 
+      [ WAYLAND RICE • LAIN-CORE x CAELESTIA ]
 EOF
 echo -e "${C_RST}\n"
 
@@ -33,12 +35,11 @@ step() { echo -e "\n${C_CYAN}▸ $1${C_RST}"; }
 ok() { echo -e "${C_GREEN}✓ $1${C_RST}"; }
 
 # ==============================================================================
-# 1. УСТАНОВКА ПАКЕТОВ (ЛОГИ ОТКРЫТЫ ДЛЯ БЕЗОПАСНОСТИ)
+# 1. УСТАНОВКА ПАКЕТОВ
 # ==============================================================================
 step "Обновление системы (введи пароль, если попросит)..."
 sudo pacman -Syu --noconfirm
 
-# Только пакеты из ОФИЦИАЛЬНЫХ репозиториев
 PACMAN_PKGS=(
     # Ядро Wayland
     hyprland hyprpaper hyprlock hypridle hyprpolkitagent
@@ -65,7 +66,6 @@ if ! command -v yay &>/dev/null; then
     cd ~
 fi
 
-# Пакеты из AUR (курсоры)
 AUR_PKGS=(bibata-cursor-theme)
 step "Установка пакетов из AUR..."
 yay -S --needed --noconfirm "${AUR_PKGS[@]}"
@@ -78,21 +78,15 @@ mkdir -p ~/.config/{hypr/scripts,waybar,dunst,kitty,fish,fuzzel,yazi,fastfetch}
 mkdir -p ~/Pictures/Screenshots
 
 step "Скачиваем эстетичные тёмные обои..."
-# Темная абстракция (отлично подходит под неон-розовый)
 wget -qO ~/Pictures/wallpaper.png "https://raw.githubusercontent.com/zhichaoh/catppuccin-wallpapers/main/minimalistic/mac-os-monterey-dark.jpg" || true
 
 # ==============================================================================
-# 3. ГЕНЕРАЦИЯ КОНФИГОВ (ГИБКИЕ И С КОММЕНТАРИЯМИ)
+# 3. ГЕНЕРАЦИЯ КОНФИГОВ
 # ==============================================================================
 step "Настройка Hyprland (Ядро системы)..."
 cat > ~/.config/hypr/hyprland.conf << 'EOF'
-# ==============================================================================
-#  HYPRLAND CONFIG — LAIN CORE
-# ==============================================================================
-
 monitor=,preferred,auto,1
 
-# --- АВТОЗАПУСК ---
 exec-once = waybar
 exec-once = hyprpaper
 exec-once = dunst
@@ -100,14 +94,12 @@ exec-once = hypridle
 exec-once = systemctl --user start hyprpolkitagent
 exec-once = wl-paste --type text --watch cliphist store
 
-# --- ПЕРЕМЕННЫЕ (Курсор и Wayland) ---
 env = XCURSOR_THEME,Bibata-Modern-Classic
 env = XCURSOR_SIZE,24
 env = HYPRCURSOR_THEME,Bibata-Modern-Classic
 env = HYPRCURSOR_SIZE,24
 env = QT_QPA_PLATFORM,wayland;xcb
 
-# --- КЛАВИАТУРА И МЫШЬ ---
 input {
     kb_layout = us,ru
     kb_options = grp:alt_shift_toggle
@@ -116,26 +108,21 @@ input {
     sensitivity = 0
 }
 
-# --- ВНЕШНИЙ ВИД (ЦВЕТА И ОТСТУПЫ) ---
 general {
-    gaps_in = 6                  # Отступы между окнами
-    gaps_out = 12                # Отступы по краям экрана
-    border_size = 2              # Толщина рамки
-
-    # ЦВЕТА: Градиент от неоново-розового к фиолетовому
+    gaps_in = 6
+    gaps_out = 12
+    border_size = 2
     col.active_border = rgba(ff5588ff) rgba(cba6f7ff) 45deg
     col.inactive_border = rgba(1a1a24cc)
-
     layout = dwindle
     resize_on_border = true
 }
 
 decoration {
-    rounding = 12                # Скругление углов окон
-    active_opacity = 0.95        # Прозрачность активного окна
-    inactive_opacity = 0.85      # Прозрачность неактивного окна
+    rounding = 12
+    active_opacity = 0.95
+    inactive_opacity = 0.85
 
-    # Размытие фона под полупрозрачными окнами
     blur {
         enabled = true
         size = 8
@@ -143,16 +130,14 @@ decoration {
         ignore_opacity = true
     }
 
-    # НЕОНОВОЕ СВЕЧЕНИЕ (Глоу-эффект)
     shadow {
         enabled = true
         range = 30
         render_power = 2
-        color = rgba(ff558855)   # Розовая полупрозрачная тень
+        color = rgba(ff558855)
     }
 }
 
-# --- АНИМАЦИИ (Плавные и упругие) ---
 animations {
     enabled = true
     bezier = overshot, 0.05, 0.9, 0.1, 1.05
@@ -171,31 +156,25 @@ dwindle {
 
 misc { disable_hyprland_logo = true }
 
-# --- ГОРЯЧИЕ КЛАВИШИ ---
 $mod = SUPER
 
-# Программы
 bind = $mod, Return, exec, kitty
-bind = $mod, E, exec, kitty -e yazi    # Файловый менеджер в терминале
-bind = $mod, Space, exec, fuzzel       # Меню приложений
+bind = $mod, E, exec, kitty -e yazi
+bind = $mod, Space, exec, fuzzel
 bind = $mod, V, exec, cliphist list | fuzzel --dmenu | cliphist decode | wl-copy
 
-# Система
-bind = $mod, M, exec, ~/.config/hypr/scripts/powermenu.sh # Выключение
-bind = $mod, L, exec, hyprlock                            # Блокировка
+bind = $mod, M, exec, ~/.config/hypr/scripts/powermenu.sh
+bind = $mod, L, exec, hyprlock
 
-# Окна
 bind = $mod, Q, killactive,
 bind = $mod, F, fullscreen, 0
 bind = $mod, T, togglefloating,
 
-# Фокус
 bind = $mod, left, movefocus, l
 bind = $mod, right, movefocus, r
 bind = $mod, up, movefocus, u
 bind = $mod, down, movefocus, d
 
-# Рабочие столы
 bind = $mod, 1, workspace, 1
 bind = $mod, 2, workspace, 2
 bind = $mod, 3, workspace, 3
@@ -207,26 +186,24 @@ bind = $mod SHIFT, 3, movetoworkspace, 3
 bind = $mod SHIFT, 4, movetoworkspace, 4
 bind = $mod SHIFT, 5, movetoworkspace, 5
 
-# Скриншоты
 bind = , Print, exec, grim - | wl-copy
 bind = SHIFT, Print, exec, grim -g "$(slurp)" - | swappy -f -
 
-# Мультимедиа (Звук и яркость)
 bindel = , XF86AudioRaiseVolume, exec, pamixer -i 5
 bindel = , XF86AudioLowerVolume, exec, pamixer -d 5
 bindl  = , XF86AudioMute, exec, pamixer -t
 bindel = , XF86MonBrightnessUp, exec, brightnessctl set 5%+
 bindel = , XF86MonBrightnessDown, exec, brightnessctl set 5%-
 
-# --- ПРАВИЛА ОКОН (Исключения) ---
 windowrulev2 = float, class:^(pavucontrol)$
 windowrulev2 = float, class:^(hyprpolkitagent)$
 
-# Блюр интерфейса
 layerrule = blur, waybar
 layerrule = ignorealpha 0.0, waybar
 layerrule = blur, fuzzel
 layerrule = ignorealpha 0.0, fuzzel
+layerrule = blur, dunst
+layerrule = ignorealpha 0.0, dunst
 EOF
 
 step "Создание меню выключения (Power Menu)..."
@@ -244,7 +221,7 @@ esac
 EOF
 chmod +x ~/.config/hypr/scripts/powermenu.sh
 
-step "Настройка панелей Waybar (Стиль Островов/Pills)..."
+step "Настройка панелей Waybar (Стиль Островов)..."
 cat > ~/.config/waybar/config.jsonc << 'EOF'
 {
     "layer": "top",
@@ -275,7 +252,7 @@ cat > ~/.config/waybar/config.jsonc << 'EOF'
     "pulseaudio": {
         "format": "{icon}  {volume}%",
         "format-muted": "  Mute",
-        "format-icons": ["", "", ""]
+        "format-icons":["", "", ""]
     },
     "battery": {
         "states": { "warning": 30, "critical": 15 },
@@ -300,10 +277,9 @@ cat > ~/.config/waybar/style.css << 'EOF'
 
 window#waybar { background: transparent; }
 
-/* Кастомизация капсул (островов) */
 #custom-launcher, #workspaces, #clock, #tray, #pulseaudio, #battery {
-    background: rgba(10, 10, 15, 0.7);    /* Темный полупрозрачный фон */
-    border: 1px solid rgba(255, 85, 136, 0.4); /* Розовая обводка */
+    background: rgba(10, 10, 15, 0.7);
+    border: 1px solid rgba(255, 85, 136, 0.4);
     border-radius: 20px;
     padding: 2px 16px;
     margin: 0 6px;
@@ -311,7 +287,6 @@ window#waybar { background: transparent; }
     transition: all 0.3s ease;
 }
 
-/* Цвета иконок */
 #custom-launcher { color: #ff5588; font-size: 18px; padding-right: 20px;}
 #clock { color: #cba6f7; }
 #pulseaudio { color: #8be9fd; }
@@ -333,7 +308,7 @@ window#waybar { background: transparent; }
 @keyframes blink { 50% { color: transparent; } }
 EOF
 
-step "Настройка Fuzzel (Сверхбыстрый Launcher)..."
+step "Настройка Fuzzel (Launcher)..."
 cat > ~/.config/fuzzel/fuzzel.ini << 'EOF'
 [main]
 font=JetBrainsMono Nerd Font:size=14
@@ -346,7 +321,9 @@ horizontal-pad=24
 vertical-pad=24
 inner-pad=12
 line-height=24
-layer=overlay[colors]
+layer=overlay
+
+[colors]
 background=0a0a0fed
 text=f8f8f2ff
 match=cba6f7ff
@@ -357,6 +334,26 @@ border=ff558880
 [border]
 width=2
 radius=16
+EOF
+
+step "Настройка Dunst (Уведомления)..."
+cat > ~/.config/dunst/dunstrc << 'EOF'
+[global]
+width = 320
+height = 120
+origin = top-center
+offset = 0x20
+corner_radius = 16
+frame_width = 1
+frame_color = "#ff558880"
+background = "#0a0a0fed"
+foreground = "#f8f8f2"
+font = JetBrainsMono Nerd Font 11
+padding = 16
+horizontal_padding = 16
+icon_position = left
+min_icon_size = 48
+max_icon_size = 64
 EOF
 
 step "Настройка Kitty (Терминал)..."
@@ -459,13 +456,12 @@ EOF
 
 step "Смена стандартной оболочки на Fish..."
 CURRENT_SHELL=$(getent passwd "$USER" | cut -d: -f7)
-if[ "$CURRENT_SHELL" != "/usr/bin/fish" ]; then
+if [ "$CURRENT_SHELL" != "/usr/bin/fish" ]; then
     sudo chsh -s $(which fish) $USER
 fi
 
 echo -e "\n${C_GREEN}${BOLD}УСТАНОВКА ЗАВЕРШЕНА УСПЕШНО!${C_RST}"
 echo -e "${C_PURP}Теперь система идеально стабильна и прозрачна в настройке.${C_RST}"
-echo -e "Файлы конфигурации лежат в ${C_CYAN}~/.config/${C_RST} и снабжены комментариями."
 echo -e "\nТвой арсенал:"
 echo -e " • ${C_CYAN}Super + Enter${C_RST} : Терминал (Kitty + Fish)"
 echo -e " • ${C_CYAN}Super + Space${C_RST} : Меню приложений (Fuzzel)"
